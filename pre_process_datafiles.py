@@ -129,5 +129,5 @@ if __name__ == "__main__":
         # Saving the dataframe to h
         dataset.to_csv(filename, header=False, index=False)
 
-        # We will use subprocess to call the CLI command to concatenate all the files into a master csv
-        subprocess.run(["concat_content"])
+    # We will use subprocess to call the CLI command to concatenate all the files into a master csv
+    subprocess.run(["concat_content"])
