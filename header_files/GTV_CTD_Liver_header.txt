@@ -166,3 +166,17 @@ Liver
 CTD_CTV
 CTD_PTV
 treatment_plan_setup
+CTD_combined
+b1_avg
+b1_max
+b1_min
+b1_std
+b2_avg
+b2_max
+b2_min
+b2_std
+b3_avg
+b3_max
+b3_min
+b3_std
+pareto

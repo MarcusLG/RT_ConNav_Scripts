@@ -9,12 +9,14 @@ import numpy as np
 import sys
 import argparse
 import os
+import pareto
+import subprocess
 
 ################ Test Case Setup ###################
 # Path
 header_file = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Code/Scripts/header_files/GTV_CTD_Liver_header.txt"
 
-input_file = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/Raw_Data/100_20_00"
+input_path = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/Raw_Data"
 output_path = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/Raw_Data"
 
 
@@ -29,6 +31,7 @@ beamlet_list = [[1, b1_columns],
 
 ####################################################
 
+################### Functions ######################
 def append_columns(dataframe, header_list):
     # Function to append new columns to dataframe to ensure the number of column matches the number of columns
     # stated in the header_list. Obviously, it's expected that the number of columns in header_list should be
@@ -66,7 +69,9 @@ def is_pareto_efficient(costs, return_mask = True):
         return is_efficient_mask
     else:
         return is_efficient
+####################################################
 
+###################### Main ########################
 if __name__ == "__main__":
     """
     Main section of the pre-processing script
@@ -74,36 +79,55 @@ if __name__ == "__main__":
     Each steps of the pre-processing to be run sequentially
     """
 
+    # Here we use subprocess to call the CLI command to run the command to append
+    # the filenames to the end of each of the files in the current directory
+    # Please take note that the working directory will be pointing to the 
+    # directory from which the script is called.
+
+    subprocess.run(["concat_filename_all"])
+
 	# Read the header file
     with open(header_file) as f:
         header_names = f.read().splitlines()
 
-    # Read the input file into a dataframe
-    dataset = pd.read_csv(input_file, header = None)
+    data_directory = os.fsencode(input_path)
 
-    # Appending the columns to ensure it matches the number of columns listed in the headers
-    dataset = append_columns(dataset, header_names)
+    # Iterate through all files in the data folder
+    for file in os.listdir(data_directory):
+        if(os.fsdecode(file) == ".DS_Store"):
+            continue
+        filename = input_path + '/' + os.fsdecode(file)
+        print(filename)
+        # Read the input file into a dataframe
+        dataset = pd.read_csv(filename, header = None)
 
-    # Assigning the header from the external header files
-    dataset.columns = header_names
+        # Appending the columns to ensure it matches the number of columns listed in the headers
+        dataset = append_columns(dataset, header_names)
 
-    # Here we calculate the statistical values of each of the beamlets
-    for element in beamlet_list:
-        dataset['b{beam_num}_avg'.format(beam_num=element[0])] = dataset.loc[:, element[1]].mean(axis=1)
-        dataset['b{beam_num}_max'.format(beam_num=element[0])] = dataset.loc[:, element[1]].max(axis=1)
-        dataset['b{beam_num}_min'.format(beam_num=element[0])] = dataset.loc[:, element[1]].min(axis=1)
-        dataset['b{beam_num}_std'.format(beam_num=element[0])] = dataset.loc[:, element[1]].std(axis=1)
-    print(dataset)
+        # Assigning the header from the external header files
+        dataset.columns = header_names
 
-    # Here we calculate the combined objectives value of the CTD
-    dataset['CTD_combined'] = dataset.loc[:, CTD_columns].sum(axis=1)
+        # Here we calculate the statistical values of each of the beamlets
+        for element in beamlet_list:
+            dataset['b{beam_num}_avg'.format(beam_num=element[0])] = dataset.loc[:, element[1]].mean(axis=1)
+            dataset['b{beam_num}_max'.format(beam_num=element[0])] = dataset.loc[:, element[1]].max(axis=1)
+            dataset['b{beam_num}_min'.format(beam_num=element[0])] = dataset.loc[:, element[1]].min(axis=1)
+            dataset['b{beam_num}_std'.format(beam_num=element[0])] = dataset.loc[:, element[1]].std(axis=1)
+        print(dataset)
 
-    # Here we call the pareto script to assign the pareto
-    objectives_idx = [dataset.columns.get_loc(c) for c in objective_columns if c in dataset]
-    print(objectives_idx)
-    np_objevtive = dataset.iloc[:, objectives_idx].to_numpy()
-    print(np_objevtive)
-    dataset['pareto'] = is_pareto_efficient(np_objevtive)
+        # Here we calculate the combined objectives value of the CTD
+        dataset['CTD_combined'] = dataset.loc[:, CTD_columns].sum(axis=1)
 
-    # Saving the dataframe to h
-    dataset.to_csv(output_path + "/output.csv", header=True, index=False)
+        # Here we call the pareto script to assign the pareto
+        objectives_idx = [dataset.columns.get_loc(c) for c in objective_columns if c in dataset]
+        print(objectives_idx)
+        np_objevtive = dataset.iloc[:, objectives_idx].to_numpy()
+        print(np_objevtive)
+        #dataset['pareto'] = pareto.flag_nondominated(np_objevtive)
+        dataset['pareto'] = is_pareto_efficient(np_objevtive)
+
+        # Saving the dataframe to h
+        dataset.to_csv(filename, header=False, index=False)
+
+        # We will use subprocess to call the CLI command to concatenate all the files into a master csv
+        subprocess.run(["concat_content"])
