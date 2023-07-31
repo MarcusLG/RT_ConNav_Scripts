@@ -14,10 +14,8 @@ import subprocess
 
 ################ Test Case Setup ###################
 # Path
-header_file = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Code/Scripts/header_files/GTV_CTD_Liver_setup_2_header.txt"
+header_file = r"header_files/GTV_CTD_Liver_setup_2_header.txt"
 
-#input_path = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/beam_setup_2/raw_data"
-#output_path = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/beam_setup_2/raw_data"
 # Update the input_path to be dynamic and based on current directory, eliminates the needs for update when running from other folders
 input_path = os.getcwd()
 output_path = input_path
