@@ -16,8 +16,11 @@ import subprocess
 # Path
 header_file = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Code/Scripts/header_files/GTV_CTD_Liver_setup_2_header.txt"
 
-input_path = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/beam_setup_2/raw_data"
-output_path = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/beam_setup_2/raw_data"
+#input_path = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/beam_setup_2/raw_data"
+#output_path = "/Users/marcuslim/Library/CloudStorage/OneDrive-UniversityofCambridge/MPhil_Thesis/Multi-objective Navigation of Radiotherapy Treatment Plan Optimisation Problem/Data/GTV_CTD_Liver/Buti_2022/beam_setup_2/raw_data"
+# Update the input_path to be dynamic and based on current directory, eliminates the needs for update when running from other folders
+input_path = os.getcwd()
+output_path = input_path
 script_path = os.path.dirname(os.path.realpath(__file__))
 
 #b1_columns = ["b1_0","b1_1","b1_2","b1_3","b1_4","b1_5","b1_6","b1_7","b1_8","b1_9","b1_10","b1_11","b1_12","b1_13","b1_14","b1_15","b1_16","b1_17","b1_18","b1_19","b1_20","b1_21","b1_22","b1_23","b1_24","b1_25","b1_26","b1_27","b1_28","b1_29","b1_30","b1_31","b1_32","b1_33","b1_34","b1_35","b1_36","b1_37","b1_38","b1_39","b1_40","b1_41","b1_42","b1_43","b1_44","b1_45","b1_46","b1_47","b1_48","b1_49","b1_50","b1_51","b1_52","b1_53"]
